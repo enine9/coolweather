@@ -5,6 +5,8 @@ import android.text.TextUtils;
 import com.example.enine9.coolweather.db.City;
 import com.example.enine9.coolweather.db.County;
 import com.example.enine9.coolweather.db.Province;
+import com.example.enine9.coolweather.gson.Weather;
+import com.google.gson.Gson;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,6 +47,7 @@ public class Utility {
                     City city =new City();
                     city.setCityName(cityObject.getString("name"));
                     city.setCityCode(cityObject.getInt("id"));
+                    city.setProvinceId(provinceId);
                     city.save();//保存数据到本地库
                 }
                 return true;
@@ -63,8 +66,8 @@ public class Utility {
                 for (int i = 0;i<allCounties.length();i++){
                     JSONObject countyObject = allCounties.getJSONObject(i);
                     County county =new County();
-                    county.setCountyName(countyObject.getString("name"));)
-                    county.setWeatherId(countyObject.getInt("weather_id"));
+                    county.setCountyName(countyObject.getString("name"));
+                    county.setWeatherId(countyObject.getString("weather_id"));
                     county.setCityId(cityId);
                     county.save();//保存数据到本地库
                 }
@@ -74,6 +77,20 @@ public class Utility {
             }
         }
         return false;
+    }
+
+//    将返回的JSON数据解析成Weather实体类
+    public static Weather handleWeatherResponse(String response){
+        try{
+            JSONObject jsonObject = new JSONObject(response);
+            JSONArray jsonArray = jsonObject.getJSONArray("HeWeather");
+            String weatherContent = jsonArray.getJSONObject(0).toString();
+            //转化成Gson
+            return new Gson().fromJson(weatherContent,Weather.class);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }
