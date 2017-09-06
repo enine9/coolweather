@@ -199,7 +199,7 @@ public class WeatherActivity extends AppCompatActivity {
         weatherLayout.setVisibility(View.VISIBLE);
         //启动后台服务
         Intent intent = new Intent(this, AutoUpdateService.class);
-        startService(Intent);
+        startService(intent);
     }
 
     //加载必应每日一图
