@@ -1,5 +1,6 @@
 package com.example.enine9.coolweather;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Build;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.enine9.coolweather.gson.Forecast;
 import com.example.enine9.coolweather.gson.Weather;
+import com.example.enine9.coolweather.serice.AutoUpdateService;
 import com.example.enine9.coolweather.util.HttpUtil;
 import com.example.enine9.coolweather.util.StatusBarUtils;
 import com.example.enine9.coolweather.util.Utility;
@@ -30,6 +32,9 @@ import java.io.IOException;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.Response;
+
+import static com.example.enine9.coolweather.MainActivity.bingPicString;
+import static com.example.enine9.coolweather.MainActivity.weatherKey;
 
 
 public class WeatherActivity extends AppCompatActivity {
@@ -117,7 +122,7 @@ public class WeatherActivity extends AppCompatActivity {
     //根据天气id请求城市天气信息
     public void requestWeather(final String weatherId){
         //查询网址，可以更换自己的key
-        String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId +"&key=bc0418b57b2d4918819d3974ac1285d9";
+        String weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId +"&key="+weatherKey;
         HttpUtil.sendOkHttpRequest(weatherUrl, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
@@ -192,11 +197,14 @@ public class WeatherActivity extends AppCompatActivity {
         carWashText.setText(carWash);
         sportText.setText(sport);
         weatherLayout.setVisibility(View.VISIBLE);
+        //启动后台服务
+        Intent intent = new Intent(this, AutoUpdateService.class);
+        startService(Intent);
     }
 
     //加载必应每日一图
     private void loadBingPic(){
-        String requestBingPic = "http://guolin.tech/api/bing_pic";
+        String requestBingPic = bingPicString;
         HttpUtil.sendOkHttpRequest(requestBingPic, new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
